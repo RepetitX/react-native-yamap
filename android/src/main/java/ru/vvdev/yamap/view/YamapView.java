@@ -3,6 +3,7 @@ package ru.vvdev.yamap.view;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.yandex.mapkit.Animation;
 import com.yandex.mapkit.RequestPoint;
 import com.yandex.mapkit.RequestPointType;
+import com.yandex.mapkit.ScreenPoint;
 import com.yandex.mapkit.directions.DirectionsFactory;
 import com.yandex.mapkit.directions.driving.DrivingArrivalPoint;
 import com.yandex.mapkit.directions.driving.DrivingOptions;
@@ -36,6 +38,7 @@ import com.yandex.mapkit.map.InputListener;
 import com.yandex.mapkit.map.PlacemarkMapObject;
 import com.yandex.mapkit.map.PolygonMapObject;
 import com.yandex.mapkit.map.PolylineMapObject;
+import com.yandex.mapkit.map.VisibleRegion;
 import com.yandex.mapkit.mapview.MapView;
 import com.yandex.mapkit.transport.TransportFactory;
 import com.yandex.mapkit.transport.masstransit.MasstransitOptions;
@@ -114,7 +117,7 @@ public class YamapView extends MapView implements UserLocationObjectListener, Ca
         }
     }
 
-    private WritableMap positionToJSON(CameraPosition position) {
+    private WritableMap positionToJSON(CameraPosition position, Boolean finished) {
         WritableMap cameraPosition = Arguments.createMap();
         Point point = position.getTarget();
         cameraPosition.putDouble("azimuth", position.getAzimuth());
@@ -124,12 +127,13 @@ public class YamapView extends MapView implements UserLocationObjectListener, Ca
         target.putDouble("lat", point.getLatitude());
         target.putDouble("lon", point.getLongitude());
         cameraPosition.putMap("point", target);
+        cameraPosition.putBoolean("finished", finished);
         return cameraPosition;
     }
 
     public void emitCameraPositionToJS(String id) {
         CameraPosition position = getMap().getCameraPosition();
-        WritableMap cameraPosition = positionToJSON(position);
+        WritableMap cameraPosition = positionToJSON(position, true);
         cameraPosition.putString("id", id);
         ReactContext reactContext = (ReactContext) getContext();
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(getId(), "cameraPosition", cameraPosition);
@@ -467,6 +471,11 @@ public class YamapView extends MapView implements UserLocationObjectListener, Ca
             CircleMapObject obj = getMap().getMapObjects().addCircle(_child.circle, 0, 0.f, 0);
             _child.setMapObject(obj);
             childs.add(_child);
+        } else if (child instanceof CustomViewMarker) {
+            CustomViewMarker _child = (CustomViewMarker) child;
+            PlacemarkMapObject obj = getMap().getMapObjects().addPlacemark(_child.point);
+            _child.setMapObject(obj);
+            childs.add(_child);
         }
     }
 
@@ -514,10 +523,41 @@ public class YamapView extends MapView implements UserLocationObjectListener, Ca
     }
 
     @Override
-    public void onCameraPositionChanged(@NonNull com.yandex.mapkit.map.Map map, @NonNull CameraPosition cameraPosition, @NonNull CameraUpdateSource cameraUpdateSource, boolean b) {
-        WritableMap position = positionToJSON(cameraPosition);
+    public void onCameraPositionChanged(@NonNull com.yandex.mapkit.map.Map map, @NonNull CameraPosition cameraPosition, @NonNull CameraUpdateSource cameraUpdateSource, boolean finished) {
+        WritableMap position = positionToJSON(cameraPosition, finished);
         ReactContext reactContext = (ReactContext) getContext();
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(getId(), "cameraPositionChanged", position);
+
+//        if (finished) {
+//            VisibleRegion visibleRegion = getFocusRegion();
+//            ScreenPoint topLeft = worldToScreen(visibleRegion.getTopLeft());
+//            ScreenPoint bottomRight = worldToScreen(visibleRegion.getBottomRight());
+//
+//            float topLeftX = topLeft.getX();
+//            float topLeftY = topLeft.getY();
+//            float bottomRightX = bottomRight.getX();
+//            float bottomRightY = bottomRight.getY();
+//
+//            float zoom = cameraPosition.getZoom();
+//
+//            ArrayList<YamapMarker> markers = new ArrayList<>();
+//            for (int i = 0; i < childs.size(); ++i) {
+//                ReactMapObject obj = childs.get(i);
+//                if (obj instanceof YamapMarker) {
+//                    YamapMarker marker = (YamapMarker) obj;
+//
+//                    float x = worldToScreen(marker.point).getX();
+//                    float y = worldToScreen(marker.point).getY();
+//
+//                    if (zoom >= 14.5 && x > topLeftX && x < bottomRightX && y > topLeftY && y < bottomRightY) {
+//                        marker.showMemoizedView();
+//                    }
+//                }
+//            }
+//
+//            Log.d("MARKER_COUNT", String.valueOf(markers.size()));
+//        }
+
     }
 
     @Override

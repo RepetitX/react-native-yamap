@@ -122,6 +122,14 @@ export class YaMap extends React.Component<YaMapProps> {
     );
   }
 
+  public addMarkers(points: Point[]) {
+    UIManager.dispatchViewManagerCommand(
+        findNodeHandle(this),
+        this.getCommand('addMarkers'),
+        [Platform.OS === 'ios' ? { points } : points]
+    );
+  }
+
   private _findRoutes(points: Point[], vehicles: Vehicles[], callback: ((event: RoutesFoundEvent<DrivingInfo | MasstransitInfo>) => void) | ((event: RoutesFoundEvent<DrivingInfo>) => void) | ((event: RoutesFoundEvent<MasstransitInfo>) => void)) {
     const cbId = CallbacksManager.addCallback(callback);
     const args
