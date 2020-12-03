@@ -5,6 +5,5 @@ export * from './components/Polyline';
 export * from './components/Circle';
 export * from './geocoding';
 export * from './interfaces';
-export * from './trololo';
 
 export { YaMap as default } from './components/Yamap';

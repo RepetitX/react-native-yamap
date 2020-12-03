@@ -28,7 +28,7 @@ export interface YaMapProps extends ViewProps {
   userLocationAccuracyStrokeColor?: string;
   userLocationAccuracyStrokeWidth?: number;
 }
-
+mhvmhmhbhj
 const YaMapNativeComponent = requireNativeComponent<YaMapProps>('YamapView');
 
 export class YaMap extends React.Component<YaMapProps> {
