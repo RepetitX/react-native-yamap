@@ -51,4 +51,13 @@ export interface CameraPosition {
   tilt: number;
   azimuth: number;
   point: Point;
+  finished: boolean
 }
+
+export interface FocusRegion {
+    topLeft: Object,
+    topRight: Object,
+    bottomLeft: Object,
+    bottomRight: Object
+}
+  

@@ -106,6 +106,10 @@ var YaMap = /** @class */ (function (_super) {
         var cbId = CallbacksManager_1.default.addCallback(callback);
         react_native_1.UIManager.dispatchViewManagerCommand(react_native_1.findNodeHandle(this), this.getCommand('getCameraPosition'), [cbId]);
     };
+    YaMap.prototype.getFocusRegion = function (callback) {
+        var cbId = CallbacksManager_1.default.addCallback(callback);
+        react_native_1.UIManager.dispatchViewManagerCommand(react_native_1.findNodeHandle(this), this.getCommand('getFocusRegion'), [cbId]);
+    };
     YaMap.prototype.addMarkers = function (points) {
         react_native_1.UIManager.dispatchViewManagerCommand(react_native_1.findNodeHandle(this), this.getCommand('addMarkers'), [react_native_1.Platform.OS === 'ios' ? { points: points } : points]);
     };
@@ -131,11 +135,15 @@ var YaMap = /** @class */ (function (_super) {
         var _a = event.nativeEvent, id = _a.id, position = __rest(_a, ["id"]);
         CallbacksManager_1.default.call(id, position);
     };
+    YaMap.prototype.processFocusRegion = function (event) {
+        var _a = event.nativeEvent, id = _a.id, focusRegion = __rest(_a, ["id"]);
+        CallbacksManager_1.default.call(id, focusRegion);
+    };
     YaMap.prototype.resolveImageUri = function (img) {
         return img ? resolveAssetSource_1.default(img).uri : '';
     };
     YaMap.prototype.getProps = function () {
-        var props = __assign(__assign({}, this.props), { onRouteFound: this.processRoute, onCameraPositionReceived: this.processCameraPosition, userLocationIcon: this.props.userLocationIcon ? this.resolveImageUri(this.props.userLocationIcon) : undefined });
+        var props = __assign(__assign({}, this.props), { onRouteFound: this.processRoute, onCameraPositionReceived: this.processCameraPosition, onFocusRegionReceived: this.processFocusRegion, userLocationIcon: this.props.userLocationIcon ? this.resolveImageUri(this.props.userLocationIcon) : undefined });
         utils_1.processColorProps(props, 'userLocationAccuracyFillColor');
         utils_1.processColorProps(props, 'userLocationAccuracyStrokeColor');
         return props;

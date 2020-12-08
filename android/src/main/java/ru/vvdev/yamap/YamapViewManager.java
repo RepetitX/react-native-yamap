@@ -1,13 +1,6 @@
 package ru.vvdev.yamap;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -20,13 +13,7 @@ import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.geometry.Point;
-import com.yandex.mapkit.layers.GeoObjectTapEvent;
-import com.yandex.mapkit.layers.GeoObjectTapListener;
 import com.yandex.mapkit.map.CameraPosition;
-import com.yandex.mapkit.map.MapObject;
-import com.yandex.mapkit.map.MapObjectTapListener;
-import com.yandex.mapkit.map.PlacemarkMapObject;
-import com.yandex.runtime.image.ImageProvider;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -35,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import ru.vvdev.yamap.view.CustomViewMarker;
+import ru.vvdev.yamap.view.YamapMarker;
 import ru.vvdev.yamap.view.YamapView;
 
 public class YamapViewManager extends ViewGroupManager<YamapView> {
@@ -87,7 +75,7 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
                 "addMarkers",
                 ADD_MARKERS);
     }
-    MapObject mark;
+
     @Override
     public void receiveCommand(
             @NonNull YamapView view,
@@ -99,16 +87,23 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
             case "addMarkers":
                 view.getMap().getMapObjects().clear();
                 ReadableArray points = args.getArray(0);
+                float zoom = view.getMap().getCameraPosition().getZoom();
+
                 for (int i = 0; i < points.size(); i++) {
                     ReadableMap point = points.getMap(i);
                     double lat = point.getDouble("lat");
                     double lon = point.getDouble("lon");
-
-                    CustomViewMarker m = new CustomViewMarker(this.ctx);
-                    m.point = new Point(lat, lon);
-                    addView(view,m,0);
+                    
+                    if (zoom >= 14.5) {
+                        CustomViewMarker m = new CustomViewMarker(this.ctx);
+                        m.point = new Point(lat, lon);
+                        addView(view, m,0);
+                    } else {
+                        YamapMarker m = new YamapMarker(this.ctx);
+                        m.point = new Point(lat, lon);
+                        addView(view, m,0);
+                    }
                 }
-
                 return;
             case "setCenter":
                 setCenter(castToYaMapView(view), args.getMap(0), (float) args.getDouble(1), (float) args.getDouble(2), (float) args.getDouble(3), (float) args.getDouble(4), args.getInt(5));

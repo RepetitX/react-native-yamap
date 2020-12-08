@@ -11,7 +11,7 @@ import {
 // @ts-ignore
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 import CallbacksManager from '../utils/CallbacksManager';
-import { Animation, Point, DrivingInfo, MasstransitInfo, RoutesFoundEvent, Vehicles, CameraPosition } from '../interfaces';
+import { Animation, Point, DrivingInfo, MasstransitInfo, RoutesFoundEvent, Vehicles, CameraPosition, FocusRegion } from '../interfaces';
 import { processColorProps } from '../utils';
 
 const { yamap: NativeYamapModule } = NativeModules;
@@ -122,6 +122,15 @@ export class YaMap extends React.Component<YaMapProps> {
     );
   }
 
+  public getFocusRegion(callback: (focusRegion: FocusRegion) => void) {
+    const cbId = CallbacksManager.addCallback(callback);
+    UIManager.dispatchViewManagerCommand(
+      findNodeHandle(this),
+      this.getCommand('getFocusRegion'),
+      [cbId],
+    );
+  }
+
   public addMarkers(points: Point[]) {
     UIManager.dispatchViewManagerCommand(
         findNodeHandle(this),
@@ -160,6 +169,11 @@ export class YaMap extends React.Component<YaMapProps> {
     CallbacksManager.call(id, position);
   }
 
+  private processFocusRegion(event: any) {
+    const { id, ...focusRegion } = event.nativeEvent;
+    CallbacksManager.call(id, focusRegion);
+  }
+
   private resolveImageUri(img: ImageSourcePropType) {
     return img ? resolveAssetSource(img).uri : '';
   }
@@ -169,6 +183,7 @@ export class YaMap extends React.Component<YaMapProps> {
       ...this.props,
       onRouteFound: this.processRoute,
       onCameraPositionReceived: this.processCameraPosition,
+      onFocusRegionReceived: this.processFocusRegion,
       userLocationIcon: this.props.userLocationIcon ? this.resolveImageUri(this.props.userLocationIcon) : undefined,
     };
     processColorProps(props, 'userLocationAccuracyFillColor' as keyof YaMapProps);

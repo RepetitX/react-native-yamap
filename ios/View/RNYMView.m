@@ -36,7 +36,7 @@
 #import "YamapMarkerView.h"
 #import "YamapCircleView.h"
 #import "RNYMView.h"
-
+#import "CustomMarkerView.m"
 
 #define ANDROID_COLOR(c) [UIColor colorWithRed:((c>>16)&0xFF)/255.0 green:((c>>8)&0xFF)/255.0 blue:((c)&0xFF)/255.0  alpha:((c>>24)&0xFF)/255.0]
 
@@ -211,6 +211,48 @@
     return routeMetadata;
 }
 
+- (CGSize)sizeOfString:(NSString *)string withFont:(NSFont *)font {
+     NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil];
+     return [[[NSAttributedString alloc] initWithString:string attributes:attributes] size];
+ }
+
+-(void) addMarkers:(NSArray<YMKPoint*>*) _points {
+    YMKMapObjectCollection *objects = self.mapWindow.map.mapObjects;
+    [objects clear];
+    float zoom = self.mapWindow.map.cameraPosition.zoom;
+    CGSize s = [self sizeOfString:@"1500р" withFont:nil];
+    
+    for (int i = 0; i < [_points count]; ++i) {
+//        if (zoom >= 14.5) {
+            
+            //NSMutableParagraphStyle* textStyle = NSMutableParagraphStyle.defaultParagraphStyle.mutableCopy;
+            //textStyle.alignment = NSTextAlignmentLeft;
+
+            //NSDictionary* textFontAttributes = @{NSFontAttributeName: [UIFont fontWithName: @"Helvetica" size: 12], NSForegroundColorAttributeName: UIColor.whiteColor, NSParagraphStyleAttributeName: textStyle};
+        //[@"trololo" drawInRect: textRect withAttributes: textFontAttributes];
+        
+        //UIView *paintView=[[UIView alloc]initWithFrame:textRect];
+            //[paintView setBackgroundColor:[UIColor redColor]];
+        
+            YMKPoint* point = [_points objectAtIndex:i];
+            CustomMarkerView *customMarker = [[CustomMarkerView alloc] initWithText:@"1500р"];
+        //[customMarker setText:@"1500р"];
+        YamapMarkerView *marker = [[YamapMarkerView alloc] init];
+            [marker setPoint:point];
+            [self insertReactSubview:marker atIndex:0];
+        [marker insertSubview:customMarker];
+        
+            
+//        } else {
+//            YMKPoint* point = [_points objectAtIndex:i];
+//
+//            YamapMarkerView *m = [[YamapMarkerView alloc] init];
+//            [m setPoint:point];
+//            [self insertReactSubview:m atIndex:0];
+//        }
+    }
+}
+
 -(void) findRoutes:(NSArray<YMKRequestPoint*>*) _points vehicles:(NSArray<NSString*>*) vehicles withId:(NSString*)_id {
     __weak RNYMView *weakSelf = self;
     if ([vehicles count] == 1 && [[vehicles objectAtIndex:0] isEqualToString:@"car"]) {
@@ -318,11 +360,12 @@
     [self setCenter:position withDuration:duration withAnimation:animation];
 }
 
--(NSDictionary*) cameraPositionToJSON:(YMKCameraPosition*) position {
+-(NSDictionary*) cameraPositionToJSON:(YMKCameraPosition*)position finished:(BOOL)isFinished {
     return @{
         @"azimuth": [NSNumber numberWithFloat:position.azimuth],
         @"tilt": [NSNumber numberWithFloat:position.tilt],
         @"zoom": [NSNumber numberWithFloat:position.zoom],
+        @"finished": [NSNumber numberWithBool:isFinished],
         @"point": @{
                 @"lat": [NSNumber numberWithDouble:position.target.latitude],
                 @"lon": [NSNumber numberWithDouble:position.target.longitude],
@@ -332,7 +375,7 @@
 
 -(void) emitCameraPositionToJS:(NSString*) _id {
     YMKCameraPosition* position = self.mapWindow.map.cameraPosition;
-    NSDictionary* cameraPosition = [self cameraPositionToJSON:position];
+    NSDictionary* cameraPosition = [self cameraPositionToJSON:position finished:YES];
     NSMutableDictionary *response = [NSMutableDictionary dictionaryWithDictionary:cameraPosition];
     [response setValue:_id forKey:@"id"];
     if (self.onCameraPositionReceived) {
@@ -340,13 +383,43 @@
     }
 }
 
+-(NSDictionary*) focusRegionToJSON:(YMKVisibleRegion*)focusRegion {
+    return @{
+        @"topLeft": @{
+            @"lat": [NSNumber numberWithDouble:[[focusRegion topLeft] latitude]],
+            @"lon": [NSNumber numberWithDouble:[[focusRegion topLeft] longitude]]
+        },
+        @"topRight": @{
+            @"lat": [NSNumber numberWithDouble:[[focusRegion topRight] latitude]],
+            @"lon": [NSNumber numberWithDouble:[[focusRegion topRight] longitude]]
+        },
+        @"bottomLeft": @{
+            @"lat": [NSNumber numberWithDouble:[[focusRegion bottomLeft] latitude]],
+            @"lon": [NSNumber numberWithDouble:[[focusRegion bottomLeft] longitude]]
+        },
+        @"bottomRight": @{
+            @"lat": [NSNumber numberWithDouble:[[focusRegion bottomRight] latitude]],
+            @"lon": [NSNumber numberWithDouble:[[focusRegion bottomRight] longitude]]
+        }
+    };
+}
+
+-(void) emitFocusRegionToJS:(NSString*) _id {
+    YMKVisibleRegion* region = [[self mapWindow] focusRegion];
+    NSDictionary* focusRegion = [self focusRegionToJSON:region];
+    NSMutableDictionary *response = [NSMutableDictionary dictionaryWithDictionary:focusRegion];
+    [response setValue:_id forKey:@"id"];
+    if (self.onFocusRegionReceived) {
+        self.onFocusRegionReceived(response);
+    }
+}
 
 - (void)onCameraPositionChangedWithMap:(nonnull YMKMap *)map
     cameraPosition:(nonnull YMKCameraPosition *)cameraPosition
 cameraUpdateSource:(YMKCameraUpdateSource)cameraUpdateSource
                               finished:(BOOL)finished {
     if (self.onCameraPositionChange) {
-        self.onCameraPositionChange([self cameraPositionToJSON:cameraPosition]);
+        self.onCameraPositionChange([self cameraPositionToJSON:cameraPosition finished:finished]);
     }
 }
 

@@ -20,6 +20,7 @@
 -(YMKPoint*) getPoint;
 -(YMKPlacemarkMapObject*) getMapObject;
 -(void) setMapObject:(YMKPlacemarkMapObject*) mapObject;
+-(void) insertSubview:(UIView *)view;
 
 @end
 

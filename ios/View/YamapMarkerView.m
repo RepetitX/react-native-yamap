@@ -57,6 +57,11 @@
     return self;
 }
 
+-(void) insertSubview:(UIView*) customMarker {
+    [self insertReactSubview:customMarker atIndex:0];
+    [self didUpdateReactSubviews];
+}
+
 -(void) updateMarker {
     if (mapObject != nil) {
         [mapObject setGeometry:_point];
@@ -159,6 +164,7 @@
         [self setChildView];
     });
 }
+
 - (void)insertReactSubview:(UIView*) subview atIndex:(NSInteger)atIndex {
     [_reactSubviews insertObject:subview atIndex: atIndex];
     [super insertReactSubview:subview atIndex:atIndex];
