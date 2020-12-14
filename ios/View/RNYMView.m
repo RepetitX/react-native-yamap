@@ -36,7 +36,7 @@
 #import "YamapMarkerView.h"
 #import "YamapCircleView.h"
 #import "RNYMView.h"
-#import "CustomMarkerView.m"
+#import "CustomMarkerView.h"
 
 #define ANDROID_COLOR(c) [UIColor colorWithRed:((c>>16)&0xFF)/255.0 green:((c>>8)&0xFF)/255.0 blue:((c)&0xFF)/255.0  alpha:((c>>24)&0xFF)/255.0]
 
@@ -90,6 +90,7 @@
     userLocationAccuracyStrokeWidth = 0.f;
     [self.mapWindow.map addCameraListenerWithCameraListener:self];
     [self.mapWindow.map addInputListenerWithInputListener:(id<YMKMapInputListener>) self];
+    self.tag = 100;
     return self;
 }
 
@@ -235,9 +236,10 @@
             //[paintView setBackgroundColor:[UIColor redColor]];
         
             YMKPoint* point = [_points objectAtIndex:i];
-            CustomMarkerView *customMarker = [[CustomMarkerView alloc] initWithText:@"1500р"];
+        CustomMarkerView *customMarker = [[CustomMarkerView alloc] initWithText:@"1500р"];
         //[customMarker setText:@"1500р"];
         YamapMarkerView *marker = [[YamapMarkerView alloc] init];
+        marker.delegate = self;
             [marker setPoint:point];
             [self insertReactSubview:marker atIndex:0];
         [marker insertSubview:customMarker];
@@ -250,6 +252,13 @@
 //            [m setPoint:point];
 //            [self insertReactSubview:m atIndex:0];
 //        }
+    }
+}
+
+-(void) markerPressed:(YMKMapObject*) mapObject {
+    NSLog(@"Do calculate thing!");  // calculate can be called from ClassB or ClassA
+    if (self.onMarkerPressed) {
+        self.onMarkerPressed(@{});
     }
 }
 
@@ -572,10 +581,6 @@ cameraUpdateSource:(YMKCameraUpdateSource)cameraUpdateSource
 }
 
 // children
--(void)addSubview:(UIView *)view {
-    [super addSubview:view];
-}
-
 - (void)insertReactSubview:(UIView<RCTComponent>*)subview atIndex:(NSInteger)atIndex {
     if ([subview isKindOfClass:[YamapPolygonView class]]) {
         YMKMapObjectCollection *objects = self.mapWindow.map.mapObjects;

@@ -47,6 +47,8 @@
     UIView* _childView;
 }
 
+@synthesize delegate;
+
 - (instancetype)init {
     self = [super init];
     zIndex =  [[NSNumber alloc] initWithInt:1];
@@ -124,7 +126,12 @@
 
 // object tap listener
 - (BOOL)onMapObjectTapWithMapObject:(nonnull YMKMapObject *)_mapObject point:(nonnull YMKPoint *)point {
-    if (self.onPress) self.onPress(@{});
+    if (self.onPress) {
+        self.onPress(@{});
+    } else {
+        [self.delegate markerPressed:_mapObject];
+    }
+    
     return YES;
 }
 

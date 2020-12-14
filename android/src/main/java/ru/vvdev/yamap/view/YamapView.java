@@ -36,6 +36,7 @@ import com.yandex.mapkit.map.InputListener;
 import com.yandex.mapkit.map.PlacemarkMapObject;
 import com.yandex.mapkit.map.PolygonMapObject;
 import com.yandex.mapkit.map.PolylineMapObject;
+import com.yandex.mapkit.map.VisibleRegion;
 import com.yandex.mapkit.mapview.MapView;
 import com.yandex.mapkit.transport.TransportFactory;
 import com.yandex.mapkit.transport.masstransit.MasstransitOptions;
@@ -114,6 +115,11 @@ public class YamapView extends MapView implements UserLocationObjectListener, Ca
         }
     }
 
+    public void clearMarkers() {
+        getMap().getMapObjects().clear();
+        childs.clear();
+    }
+
     private WritableMap positionToJSON(CameraPosition position, Boolean finished) {
         WritableMap cameraPosition = Arguments.createMap();
         Point point = position.getTarget();
@@ -134,6 +140,45 @@ public class YamapView extends MapView implements UserLocationObjectListener, Ca
         cameraPosition.putString("id", id);
         ReactContext reactContext = (ReactContext) getContext();
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(getId(), "cameraPosition", cameraPosition);
+    }
+
+    private WritableMap focusRegionToJSON(VisibleRegion visibleRegion) {
+        Point topLeftPoint = visibleRegion.getTopLeft();
+        Point topRightPoint = visibleRegion.getTopRight();
+        Point bottomLeftPoint = visibleRegion.getBottomLeft();
+        Point bottomRightPoint = visibleRegion.getBottomRight();
+
+        WritableMap focusRegion = Arguments.createMap();
+
+        WritableMap topLeft = Arguments.createMap();
+        topLeft.putDouble("lat", topLeftPoint.getLatitude());
+        topLeft.putDouble("lon", topLeftPoint.getLongitude());
+        focusRegion.putMap("topLeft", topLeft);
+
+        WritableMap topRight = Arguments.createMap();
+        topRight.putDouble("lat", topRightPoint.getLatitude());
+        topRight.putDouble("lon", topRightPoint.getLongitude());
+        focusRegion.putMap("topRight", topRight);
+
+        WritableMap bottomLeft = Arguments.createMap();
+        bottomLeft.putDouble("lat", bottomLeftPoint.getLatitude());
+        bottomLeft.putDouble("lon", bottomLeftPoint.getLongitude());
+        focusRegion.putMap("bottomLeft", bottomLeft);
+
+        WritableMap bottomRight = Arguments.createMap();
+        bottomRight.putDouble("lat", bottomRightPoint.getLatitude());
+        bottomRight.putDouble("lon", bottomRightPoint.getLongitude());
+        focusRegion.putMap("bottomRight", bottomRight);
+
+        return focusRegion;
+    }
+
+    public void emitFocusRegionToJS(String id) {
+        VisibleRegion visibleRegion = getFocusRegion();
+        WritableMap focusRegion = focusRegionToJSON(visibleRegion);
+        focusRegion.putString("id", id);
+        ReactContext reactContext = (ReactContext) getContext();
+        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(getId(), "focusRegion", focusRegion);
     }
 
     public void setZoom(Float zoom, float duration, int animation) {

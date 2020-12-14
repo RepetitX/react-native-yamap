@@ -4,10 +4,14 @@
 #import <YandexMapKit/YMKPolygonMapObject.h>
 #import <YandexMapKit/YMKPoint.h>
 
+@protocol YamapMarkerViewDelegate <NSObject>
+-(void) markerPressed:(YMKMapObject*) mapObject;   //method from ClassA
+@end
+
 @class RCTBridge;
 
 @interface YamapMarkerView: UIView<YMKMapObjectTapListener, RCTComponent>
-
+@property (assign) id <YamapMarkerViewDelegate> delegate;
 @property (nonatomic, copy) RCTBubblingEventBlock onPress;
 
 // props

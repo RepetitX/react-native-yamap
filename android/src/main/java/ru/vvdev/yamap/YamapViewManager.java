@@ -1,5 +1,6 @@
 package ru.vvdev.yamap;
 
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -34,6 +35,9 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
     private static final int SET_ZOOM = 4;
     private static final int GET_CAMERA_POSITION = 5;
     private static final int ADD_MARKERS = 6;
+    private static final int  GET_FOCUS_REGION = 7;
+
+    private int viewsCount = 0;
 
     YamapViewManager() {
     }
@@ -43,9 +47,16 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
         return REACT_CLASS;
     }
 
+//    @Override
+//    public Map<String, Object> getExportedCustomDirectEventTypeConstants() {
+//        return MapBuilder.<String, Object>builder()
+//                .build();
+//    }
+
     @Override
     public Map<String, Object> getExportedCustomDirectEventTypeConstants() {
         return MapBuilder.<String, Object>builder()
+                .put("onMarkerPressed", MapBuilder.of("registrationName", "onMarkerPressed"))
                 .build();
     }
 
@@ -56,6 +67,7 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
                 .put("cameraPositionChanged", MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onCameraPositionChange")))
                 .put("onMapPress", MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onMapPress")))
                 .put("onMapLongPress", MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onMapLongPress")))
+                .put("focusRegion", MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onFocusRegionReceived")))
                 .build();
     }
 
@@ -73,7 +85,9 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
                 "getCameraPosition",
                 GET_CAMERA_POSITION,
                 "addMarkers",
-                ADD_MARKERS);
+                ADD_MARKERS,
+                "getFocusRegion",
+                GET_FOCUS_REGION);
     }
 
     @Override
@@ -85,7 +99,7 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
         Assertions.assertNotNull(args);
         switch (commandType) {
             case "addMarkers":
-                view.getMap().getMapObjects().clear();
+                view.clearMarkers();
                 ReadableArray points = args.getArray(0);
                 float zoom = view.getMap().getCameraPosition().getZoom();
 
@@ -97,13 +111,17 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
                     if (zoom >= 14.5) {
                         CustomViewMarker m = new CustomViewMarker(this.ctx);
                         m.point = new Point(lat, lon);
-                        addView(view, m,0);
+                        m.setParentId(view.getId());
+                        view.addFeature(m,i);
                     } else {
                         YamapMarker m = new YamapMarker(this.ctx);
                         m.point = new Point(lat, lon);
-                        addView(view, m,0);
+                        view.addFeature(m,i);
                     }
+
+                    viewsCount = i;
                 }
+
                 return;
             case "setCenter":
                 setCenter(castToYaMapView(view), args.getMap(0), (float) args.getDouble(1), (float) args.getDouble(2), (float) args.getDouble(3), (float) args.getDouble(4), args.getInt(5));
@@ -124,6 +142,11 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
             case "getCameraPosition":
                 if (args != null) {
                     view.emitCameraPositionToJS(args.getString(0));
+                }
+                return;
+            case "getFocusRegion":
+                if (args != null) {
+                    view.emitFocusRegionToJS(args.getString(0));
                 }
                 return;
             default:

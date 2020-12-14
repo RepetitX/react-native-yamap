@@ -6,11 +6,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.util.Log;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.map.MapObject;
 import com.yandex.mapkit.map.MapObjectTapListener;
@@ -22,6 +25,7 @@ import ru.vvdev.yamap.models.ReactMapObject;
 public class CustomViewMarker extends ViewGroup implements MapObjectTapListener, ReactMapObject {
     public Point point;
     private PlacemarkMapObject mapObject;
+    private int parentId;
 
     public CustomViewMarker(Context context) {
         super(context);
@@ -71,9 +75,13 @@ public class CustomViewMarker extends ViewGroup implements MapObjectTapListener,
 
     @Override
     public boolean onMapObjectTap(@NonNull MapObject mapObject, @NonNull Point point) {
-        //WritableMap e = Arguments.createMap();
-        //((ReactContext) getContext()).getJSModule(RCTEventEmitter.class).receiveEvent(getId(), "onPress", e);
-        Log.d("RRR", "-=-=-=-=-=-=");
-        return false;
+        WritableMap e = Arguments.createMap();
+        e.putString("message", "MyMessage");
+        ((ReactContext) getContext()).getJSModule(RCTEventEmitter.class).receiveEvent(parentId, "onMarkerPressed", e);
+        return true;
+    }
+
+    public void setParentId(int id) {
+        parentId = id;
     }
 }
