@@ -221,37 +221,23 @@
     YMKMapObjectCollection *objects = self.mapWindow.map.mapObjects;
     [objects clear];
     float zoom = self.mapWindow.map.cameraPosition.zoom;
-    CGSize s = [self sizeOfString:@"1500р" withFont:nil];
     
     for (int i = 0; i < [_points count]; ++i) {
-//        if (zoom >= 14.5) {
-            
-            //NSMutableParagraphStyle* textStyle = NSMutableParagraphStyle.defaultParagraphStyle.mutableCopy;
-            //textStyle.alignment = NSTextAlignmentLeft;
-
-            //NSDictionary* textFontAttributes = @{NSFontAttributeName: [UIFont fontWithName: @"Helvetica" size: 12], NSForegroundColorAttributeName: UIColor.whiteColor, NSParagraphStyleAttributeName: textStyle};
-        //[@"trololo" drawInRect: textRect withAttributes: textFontAttributes];
-        
-        //UIView *paintView=[[UIView alloc]initWithFrame:textRect];
-            //[paintView setBackgroundColor:[UIColor redColor]];
-        
+        if (zoom >= 14.5) {
             YMKPoint* point = [_points objectAtIndex:i];
-        CustomMarkerView *customMarker = [[CustomMarkerView alloc] initWithText:@"1500р"];
-        //[customMarker setText:@"1500р"];
-        YamapMarkerView *marker = [[YamapMarkerView alloc] init];
-        marker.delegate = self;
+            CustomMarkerView *customMarker = [[CustomMarkerView alloc] initWithText:@"1500р"];
+            YamapMarkerView *marker = [[YamapMarkerView alloc] init];
+            marker.delegate = self;
             [marker setPoint:point];
             [self insertReactSubview:marker atIndex:0];
-        [marker insertSubview:customMarker];
-        
-            
-//        } else {
-//            YMKPoint* point = [_points objectAtIndex:i];
-//
-//            YamapMarkerView *m = [[YamapMarkerView alloc] init];
-//            [m setPoint:point];
-//            [self insertReactSubview:m atIndex:0];
-//        }
+            [marker insertSubview:customMarker];
+        } else {
+            YMKPoint* point = [_points objectAtIndex:i];
+
+            YamapMarkerView *m = [[YamapMarkerView alloc] init];
+            [m setPoint:point];
+            [self insertReactSubview:m atIndex:0];
+        }
     }
 }
 
