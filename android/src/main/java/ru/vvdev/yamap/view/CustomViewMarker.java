@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -37,28 +39,26 @@ public class CustomViewMarker extends ViewGroup implements MapObjectTapListener,
     }
 
     private void updateMarker() {
-        String text = "1500 р";
+        Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Bold.ttf");
+        String text = "2500 р";
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.WHITE);
-        paint.setTextSize(50);
+        paint.setTextSize(45);
+        paint.setTypeface(typeface);
 
-        Paint rectPaint = new Paint();
+        Paint rectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         rectPaint.setTextSize(50);
-        rectPaint.setColor(Color.RED);
+        rectPaint.setColor(Color.BLUE);
         Rect bounds = new Rect();
         rectPaint.getTextBounds(text, 0, text.length(), bounds);
 
-        Rect rect = new Rect();
-        rect.top = 0;
-        rect.left = 0;
-        rect.bottom = bounds.height() + 10;
-        rect.right = bounds.width() + 10;
-
-        Bitmap b = Bitmap.createBitmap(bounds.width()+10, bounds.height()+10, Bitmap.Config.ARGB_8888);
+        RectF rect = new RectF(5 ,5, bounds.width() + 30, bounds.height() + 30);
+        Bitmap b = Bitmap.createBitmap(bounds.width()+41, bounds.height()+41, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(b);
-
-        c.drawRect(rect, rectPaint);
-        c.drawText(text,5,bounds.height()+5, paint);
+        rectPaint.setShadowLayer(8, 3, 3, Color.argb(180,0,0,0));
+        setLayerType(LAYER_TYPE_SOFTWARE, rectPaint);
+        c.drawRoundRect(rect, 15, 15, rectPaint);
+        c.drawText(text,15,bounds.height()+10, paint);
 
         mapObject.setIcon(ImageProvider.fromBitmap(b));
     }
