@@ -1,6 +1,8 @@
 export interface Point {
     lat: number;
     lon: number;
+    text?: string;
+    id?: number;
 }
 export declare type MasstransitVehicles = 'bus' | 'trolleybus' | 'tramway' | 'minibus' | 'suburban' | 'underground' | 'ferry' | 'cable' | 'funicular';
 export declare type Vehicles = MasstransitVehicles | 'walk' | 'car';
