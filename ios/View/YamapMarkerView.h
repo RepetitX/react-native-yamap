@@ -5,7 +5,7 @@
 #import <YandexMapKit/YMKPoint.h>
 
 @protocol YamapMarkerViewDelegate <NSObject>
--(void) markerPressed:(YMKMapObject*) mapObject;   //method from ClassA
+-(void) markerPressed:(NSNumber*) pointId lat:(double)lat lon:(double)lon;   //method from ClassA
 @end
 
 @class RCTBridge;
@@ -19,6 +19,7 @@
 -(void) setScale:(NSNumber*) _scale;
 -(void) setSource:(NSString*) _source;
 -(void) setPoint:(YMKPoint*) _points;
+-(void) setPointId:(NSNumber*) _pointId;
 -(void) setAnchor:(NSValue*) _anchor;
 
 -(YMKPoint*) getPoint;

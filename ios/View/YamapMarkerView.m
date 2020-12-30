@@ -37,6 +37,7 @@
 
 @implementation YamapMarkerView {
     YMKPoint* _point;
+    NSNumber* _pointId;
     YMKPlacemarkMapObject* mapObject;
     NSNumber* zIndex;
     NSNumber* scale;
@@ -129,10 +130,14 @@
     if (self.onPress) {
         self.onPress(@{});
     } else {
-        [self.delegate markerPressed:_mapObject];
+        [self.delegate markerPressed:_pointId lat:[point latitude] lon:[point longitude]];
     }
     
     return YES;
+}
+
+-(void) setPointId:(NSNumber*) pointId {
+    _pointId = pointId;
 }
 
 -(YMKPoint*) getPoint {

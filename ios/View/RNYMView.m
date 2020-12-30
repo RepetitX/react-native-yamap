@@ -217,22 +217,28 @@
      return [[[NSAttributedString alloc] initWithString:string attributes:attributes] size];
  }
 
--(void) addMarkers:(NSArray<YMKPoint*>*) _points {
+-(void) addMarkers:(NSArray*) _points {
     YMKMapObjectCollection *objects = self.mapWindow.map.mapObjects;
     [objects clear];
     float zoom = self.mapWindow.map.cameraPosition.zoom;
     
     for (int i = 0; i < [_points count]; ++i) {
+        NSMutableDictionary *customPoint = [_points objectAtIndex:i];
+        YMKPoint* point = [customPoint objectForKey:@"point"];
+        NSNumber *pointId = [customPoint objectForKey:@"id"];
+        NSString *text = [[customPoint objectForKey:@"text"] stringValue];
+        
         if (zoom >= 14.5) {
-            YMKPoint* point = [_points objectAtIndex:i];
-            CustomMarkerView *customMarker = [[CustomMarkerView alloc] initWithText:@"1500р"];
+            //YMKPoint* point = [_points objectAtIndex:i];
+            CustomMarkerView *customMarker = [[CustomMarkerView alloc] initWithText:text];
             YamapMarkerView *marker = [[YamapMarkerView alloc] init];
             marker.delegate = self;
             [marker setPoint:point];
+            [marker setPointId:pointId];
             [self insertReactSubview:marker atIndex:0];
             [marker insertSubview:customMarker];
         } else {
-            YMKPoint* point = [_points objectAtIndex:i];
+            //YMKPoint* point = [_points objectAtIndex:i];
 
             YamapMarkerView *m = [[YamapMarkerView alloc] init];
             [m setPoint:point];
@@ -241,10 +247,14 @@
     }
 }
 
--(void) markerPressed:(YMKMapObject*) mapObject {
-    NSLog(@"Do calculate thing!");  // calculate can be called from ClassB or ClassA
+-(void) markerPressed:(NSNumber*) pointId lat:(double)lat lon:(double)lon {
+    //[[mapObject geometry] longitude];
     if (self.onMarkerPressed) {
-        self.onMarkerPressed(@{});
+        self.onMarkerPressed(@{
+            @"id": pointId,
+            @"lat": [NSNumber numberWithDouble:lat],
+            @"lon": [NSNumber numberWithDouble:lon]
+        });
     }
 }
 

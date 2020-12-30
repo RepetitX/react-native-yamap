@@ -100,7 +100,7 @@ RCT_EXPORT_METHOD(addMarkers:(nonnull NSNumber*) reactTag json:(NSDictionary*) j
             RCTLogError(@"Cannot find NativeView with tag #%@", reactTag);
             return;
         }
-        NSArray<YMKPoint*>* points = [RCTConvert Points:json[@"points"]];
+        NSArray *points = [RCTConvert CustomPoints:json[@"points"]];
         [view addMarkers:points];
     }];
     
