@@ -57,22 +57,22 @@ public class CustomViewMarker extends ViewGroup implements MapObjectTapListener,
         String text = this.text;
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.WHITE);
-        paint.setTextSize(45);
+        paint.setTextSize(39);
         paint.setTypeface(typeface);
 
         Paint rectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        rectPaint.setTextSize(50);
+        rectPaint.setTextSize(39);
         rectPaint.setColor(Color.BLUE);
         Rect bounds = new Rect();
         rectPaint.getTextBounds(text, 0, text.length(), bounds);
 
-        RectF rect = new RectF(5 ,5, bounds.width() + 30, bounds.height() + 30);
+        RectF rect = new RectF(5 ,5, bounds.width() + 35, bounds.height() + 28);
         Bitmap b = Bitmap.createBitmap(bounds.width()+41, bounds.height()+41, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(b);
         rectPaint.setShadowLayer(8, 3, 3, Color.argb(180,0,0,0));
         setLayerType(LAYER_TYPE_SOFTWARE, rectPaint);
         c.drawRoundRect(rect, 15, 15, rectPaint);
-        c.drawText(text,15,bounds.height()+10, paint);
+        c.drawText(text,17,bounds.height()+10, paint);
 
         mapObject.setIcon(ImageProvider.fromBitmap(b));
     }

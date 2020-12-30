@@ -107,9 +107,13 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
                     ReadableMap point = points.getMap(i);
                     double lat = point.getDouble("lat");
                     double lon = point.getDouble("lon");
+                    int poinId = point.getInt("id");
+                    String text = point.getString("text");
                     
                     if (zoom >= 14.5) {
                         CustomViewMarker m = new CustomViewMarker(this.ctx);
+                        m.setPointId(poinId);
+                        m.setText(text);
                         m.point = new Point(lat, lon);
                         m.setParentId(view.getId());
                         view.addFeature(m,i);
