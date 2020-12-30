@@ -1,8 +1,11 @@
 export interface Point {
   lat: number,
-  lon: number,
-  text?: string,
-  id?: number
+  lon: number
+}
+
+export interface CustomMarker extends Point {
+    text: string,
+    id: number
 }
 
 export type MasstransitVehicles = 'bus' | 'trolleybus' | 'tramway' | 'minibus' | 'suburban' | 'underground' | 'ferry' | 'cable' | 'funicular';

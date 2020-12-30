@@ -28,6 +28,8 @@ public class CustomViewMarker extends ViewGroup implements MapObjectTapListener,
     public Point point;
     private PlacemarkMapObject mapObject;
     private int parentId;
+    private int pointId;
+    private String text;
 
     public CustomViewMarker(Context context) {
         super(context);
@@ -38,9 +40,21 @@ public class CustomViewMarker extends ViewGroup implements MapObjectTapListener,
 
     }
 
+    public void setPointId(int id) {
+        this.pointId = id;
+    }
+
+    public int getPointId() {
+        return this.pointId;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
     private void updateMarker() {
         Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Bold.ttf");
-        String text = "2500 р";
+        String text = this.text;
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.WHITE);
         paint.setTextSize(45);
@@ -76,7 +90,9 @@ public class CustomViewMarker extends ViewGroup implements MapObjectTapListener,
     @Override
     public boolean onMapObjectTap(@NonNull MapObject mapObject, @NonNull Point point) {
         WritableMap e = Arguments.createMap();
-        e.putString("message", "MyMessage");
+        e.putDouble("lat", point.getLatitude());
+        e.putDouble("lon", point.getLongitude());
+        e.putInt("id", this.getPointId());
         ((ReactContext) getContext()).getJSModule(RCTEventEmitter.class).receiveEvent(parentId, "onMarkerPressed", e);
         return true;
     }

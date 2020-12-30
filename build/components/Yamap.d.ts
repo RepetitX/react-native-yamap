@@ -1,6 +1,6 @@
 import React from 'react';
 import { ViewProps, ImageSourcePropType, NativeSyntheticEvent } from 'react-native';
-import { Animation, Point, DrivingInfo, MasstransitInfo, RoutesFoundEvent, Vehicles, CameraPosition, FocusRegion } from '../interfaces';
+import { Animation, Point, DrivingInfo, MasstransitInfo, RoutesFoundEvent, Vehicles, CameraPosition, FocusRegion, CustomMarker } from '../interfaces';
 export interface YaMapProps extends ViewProps {
     userLocationIcon?: ImageSourcePropType;
     showUserPosition?: boolean;
@@ -36,7 +36,7 @@ export declare class YaMap extends React.Component<YaMapProps> {
     setZoom(zoom: number, duration?: number, animation?: Animation): void;
     getCameraPosition(callback: (position: CameraPosition) => void): void;
     getFocusRegion(callback: (focusRegion: FocusRegion) => void): void;
-    addMarkers(points: Point[]): void;
+    addMarkers(points: CustomMarker[]): void;
     private _findRoutes;
     private getCommand;
     private processRoute;

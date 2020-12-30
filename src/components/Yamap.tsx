@@ -11,7 +11,7 @@ import {
 // @ts-ignore
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 import CallbacksManager from '../utils/CallbacksManager';
-import { Animation, Point, DrivingInfo, MasstransitInfo, RoutesFoundEvent, Vehicles, CameraPosition, FocusRegion } from '../interfaces';
+import { Animation, Point, DrivingInfo, MasstransitInfo, RoutesFoundEvent, Vehicles, CameraPosition, FocusRegion, CustomMarker } from '../interfaces';
 import { processColorProps } from '../utils';
 
 const { yamap: NativeYamapModule } = NativeModules;
@@ -131,7 +131,7 @@ export class YaMap extends React.Component<YaMapProps> {
     );
   }
 
-  public addMarkers(points: Point[]) {
+  public addMarkers(points: CustomMarker[]) {
     UIManager.dispatchViewManagerCommand(
         findNodeHandle(this),
         this.getCommand('addMarkers'),
