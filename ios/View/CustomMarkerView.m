@@ -1,10 +1,16 @@
 #import "CustomMarkerView.h"
 
 @implementation CustomMarkerView {
-    NSString * _text;
+    NSString* _text;
 }
 
 - (instancetype)initWithText:(NSString *)text {
+    self = [self initWithText:text andColor:[UIColor blueColor]];
+    
+    return self;
+}
+
+- (instancetype)initWithText:(NSString *)text andColor:(UIColor *)color {
     self = [self initWithFrame:CGRectMake(0,0,0,0)];
     
     if (self) {
@@ -23,7 +29,7 @@
         markerText.center = CGPointMake((size.width + 8) / 2, (size.height + 2) / 2);
         
         UIView* roundedView = [[UIView alloc] initWithFrame: CGRectMake(0 , 0, size.width + 8, size.height + 2)];
-        roundedView.backgroundColor = [UIColor blueColor];//[UIColor colorWithRed: 0.28 green: 0.56 blue: 0.62 alpha: 1.00];
+        roundedView.backgroundColor = color;//[UIColor colorWithRed: 0.28 green: 0.56 blue: 0.62 alpha: 1.00];
         roundedView.layer.cornerRadius = 5.0;
         roundedView.layer.masksToBounds = NO;
         [roundedView addSubview:markerText];

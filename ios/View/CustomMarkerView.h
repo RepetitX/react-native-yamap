@@ -5,6 +5,8 @@
 @interface CustomMarkerView : UIView
 
 - (instancetype) initWithText:(NSString *) text;
+- (instancetype) initWithText:(NSString *) text andColor:(UIColor*) color;
+
 
 @end
 

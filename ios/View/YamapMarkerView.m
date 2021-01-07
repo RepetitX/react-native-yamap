@@ -30,6 +30,7 @@
 #endif
 
 #import "YamapMarkerView.h"
+#import "CustomMarkerView.h"
 
 #define ANDROID_COLOR(c) [UIColor colorWithRed:((c>>16)&0xFF)/255.0 green:((c>>8)&0xFF)/255.0 blue:((c)&0xFF)/255.0  alpha:((c>>24)&0xFF)/255.0]
 
@@ -37,7 +38,9 @@
 
 @implementation YamapMarkerView {
     YMKPoint* _point;
-    NSNumber* _pointId;
+    NSString* _pointId;
+    NSString* _text;
+    
     YMKPlacemarkMapObject* mapObject;
     NSNumber* zIndex;
     NSNumber* scale;
@@ -50,7 +53,7 @@
 
 @synthesize delegate;
 
-- (instancetype)init {
+-(instancetype)init {
     self = [super init];
     zIndex =  [[NSNumber alloc] initWithInt:1];
     scale =  [[NSNumber alloc] initWithInt:1];
@@ -60,7 +63,38 @@
     return self;
 }
 
--(void) insertSubview:(UIView*) customMarker {
+-(instancetype)initWithCustomMarker:(NSString*) text
+                           andPoint:(YMKPoint*) point
+                         andPointId:(NSString*) pointId
+                           andState:(BOOL) state
+{
+    self = [self init];
+
+    _text = text;
+    _pointId = pointId;
+    
+    [self setPoint:point];
+    [self insertCustomMarker:[self createCustomMarkerWithText:text andState:state]];
+
+    return self;
+}
+
+-(CustomMarkerView*) createCustomMarkerWithText:(NSString*) text
+                                      andState:(BOOL) state
+{
+    CustomMarkerView *customMarker;
+
+    if (state) {
+        customMarker = [[CustomMarkerView alloc] initWithText:text andColor:[UIColor redColor]];
+    } else {
+        customMarker = [[CustomMarkerView alloc] initWithText:text];
+    }
+    
+    return customMarker;
+}
+
+-(void) insertCustomMarker:(CustomMarkerView*) customMarker {
+    [self removeReactSubview:_childView];
     [self insertReactSubview:customMarker atIndex:0];
     [self didUpdateReactSubviews];
 }
@@ -119,6 +153,7 @@
     source = _source;
     [self updateMarker];
 }
+
 -(void) setMapObject:(YMKPlacemarkMapObject *)_mapObject {
     mapObject = _mapObject;
     [mapObject addTapListenerWithTapListener:self];
@@ -130,13 +165,21 @@
     if (self.onPress) {
         self.onPress(@{});
     } else {
-        [self.delegate markerPressed:_pointId lat:[point latitude] lon:[point longitude]];
+        [self.delegate markerPressed:_pointId point:point markerView:self];
     }
     
     return YES;
 }
 
--(void) setPointId:(NSNumber*) pointId {
+-(void) activate {
+    [self insertCustomMarker:[self createCustomMarkerWithText:_text andState:YES]];
+}
+
+-(void) deactivate {
+    [self insertCustomMarker:[self createCustomMarkerWithText:_text andState:NO]];
+}
+
+-(void) setPointId:(NSString*) pointId {
     _pointId = pointId;
 }
 

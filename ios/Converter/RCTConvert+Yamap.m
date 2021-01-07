@@ -42,11 +42,11 @@
         NSMutableDictionary *customPoint = [[NSMutableDictionary alloc] init];
         double lat = [[jsonMarker valueForKey:@"lat"] doubleValue];
         double lon = [[jsonMarker valueForKey:@"lon"] doubleValue];
-        NSInteger id = [[jsonMarker valueForKey:@"id"] integerValue];
+        NSString *id = [[jsonMarker valueForKey:@"id"] stringValue];
         NSString *text = [[jsonMarker valueForKey:@"text"] stringValue];
         YMKPoint *point = [YMKPoint pointWithLatitude:lat longitude:lon];
         [customPoint setObject:point forKey:@"point"];
-        [customPoint setObject:[NSNumber numberWithInteger:id] forKey:@"id"];
+        [customPoint setObject:id forKey:@"id"];
         [customPoint setObject:text forKey:@"text"];
         [result addObject:customPoint];
     }

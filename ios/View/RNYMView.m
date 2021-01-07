@@ -43,6 +43,9 @@
 #define UIColorFromRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 @implementation RNYMView {
+    
+    YamapMarkerView* activeMarker;
+    NSString* activePointId;
     YMKMasstransitSession *masstransitSession;
     YMKMasstransitSession *walkSession;
     YMKMasstransitRouter *masstransitRouter;
@@ -220,26 +223,30 @@
 -(void) addMarkers:(NSArray*) _points {
     YMKMapObjectCollection *objects = self.mapWindow.map.mapObjects;
     [objects clear];
+    
     float zoom = self.mapWindow.map.cameraPosition.zoom;
     
     for (int i = 0; i < [_points count]; ++i) {
         NSMutableDictionary *customPoint = [_points objectAtIndex:i];
-        YMKPoint* point = [customPoint objectForKey:@"point"];
-        NSNumber *pointId = [customPoint objectForKey:@"id"];
+        NSString *pointId = [customPoint objectForKey:@"id"];
+        YMKPoint *point = [customPoint objectForKey:@"point"];
         NSString *text = [[customPoint objectForKey:@"text"] stringValue];
         
         if (zoom >= 14.5) {
-            //YMKPoint* point = [_points objectAtIndex:i];
-            CustomMarkerView *customMarker = [[CustomMarkerView alloc] initWithText:text];
-            YamapMarkerView *marker = [[YamapMarkerView alloc] init];
+            BOOL state = NO;
+            if (activePointId && [activePointId isEqualToString:pointId]) {
+                state = YES;
+            };
+            YamapMarkerView *marker = [[YamapMarkerView alloc] initWithCustomMarker:text
+                                                                           andPoint:point
+                                                                         andPointId:pointId
+                                                                           andState:state];
+            if (state) {
+                activeMarker = marker;
+            }
             marker.delegate = self;
-            [marker setPoint:point];
-            [marker setPointId:pointId];
             [self insertReactSubview:marker atIndex:0];
-            [marker insertSubview:customMarker];
         } else {
-            //YMKPoint* point = [_points objectAtIndex:i];
-
             YamapMarkerView *m = [[YamapMarkerView alloc] init];
             [m setPoint:point];
             [self insertReactSubview:m atIndex:0];
@@ -247,13 +254,27 @@
     }
 }
 
--(void) markerPressed:(NSNumber*) pointId lat:(double)lat lon:(double)lon {
-    //[[mapObject geometry] longitude];
+-(void) deactivateMarker {
+    if (activeMarker) {
+        [activeMarker deactivate];
+        activeMarker = nil;
+        activePointId = nil;
+    }
+}
+
+-(void) markerPressed:(NSString*) pointId
+                point:(YMKPoint*) point
+           markerView:(YamapMarkerView*) markerView
+{
     if (self.onMarkerPressed) {
+        [self deactivateMarker];
+        [markerView activate];
+        activeMarker = markerView;
+        activePointId = pointId;
         self.onMarkerPressed(@{
             @"id": pointId,
-            @"lat": [NSNumber numberWithDouble:lat],
-            @"lon": [NSNumber numberWithDouble:lon]
+            @"lat": [NSNumber numberWithDouble:[point latitude]],
+            @"lon": [NSNumber numberWithDouble:[point longitude]]
         });
     }
 }
@@ -539,6 +560,7 @@ cameraUpdateSource:(YMKCameraUpdateSource)cameraUpdateSource
 
 - (void)onMapTapWithMap:(nonnull YMKMap *)map
                   point:(nonnull YMKPoint *)point {
+    [self deactivateMarker];
     if (self.onMapPress) {
         NSDictionary* data = @{
             @"lat": [NSNumber numberWithDouble:point.latitude],
