@@ -105,14 +105,12 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
                     ReadableMap point = points.getMap(i);
                     double lat = point.getDouble("lat");
                     double lon = point.getDouble("lon");
-                    int pointId = point.getInt("id");
+                    String pointId = point.getString("id");
                     String text = point.getString("text");
-                    String stringId = Double.toString(lat) + Double.toString(lon);
                     
                     if (zoom >= 14.5) {
                         CustomViewMarker m = new CustomViewMarker(this.ctx);
                         m.setPointId(pointId);
-                        m.setPointStringId(stringId);
                         m.setText(text);
                         m.point = new Point(lat, lon);
                         m.setParentId(view.getId());
@@ -121,7 +119,7 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
                         m.setMarkerTapListener(new CustomViewMarker.MarkerTapListener() {
                             @Override
                             public void onMarkerTap(CustomViewMarker marker, Point point) {
-                                currentActivePoint = marker.getPointStringId();
+                                currentActivePoint = marker.getPointId();
                                 if (currentMarker != null) {
                                     currentMarker.deactivate();
                                 }
@@ -131,7 +129,7 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
                         });
 
                         if (currentActivePoint != null) {
-                            if (currentActivePoint.equals(m.getPointStringId())) {
+                            if (currentActivePoint.equals(m.getPointId())) {
                                 m.activate();
                                 currentMarker = m;
                             }

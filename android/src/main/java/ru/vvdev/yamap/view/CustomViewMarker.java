@@ -28,9 +28,8 @@ public class CustomViewMarker extends ViewGroup implements MapObjectTapListener,
     public Point point;
     private PlacemarkMapObject mapObject;
     private int parentId;
-    private int pointId;
+    private String pointId;
     private String text;
-    private String stringId;
 
     public interface MarkerTapListener {
         void onMarkerTap(CustomViewMarker marker, Point point);
@@ -51,20 +50,11 @@ public class CustomViewMarker extends ViewGroup implements MapObjectTapListener,
 
     }
 
-    public void setPointId(int id) {
+    public void setPointId(String id) {
         this.pointId = id;
     }
 
-    public void setPointStringId(String stringId) {
-        this.stringId = stringId;
-    }
-
-    public String getPointStringId() {
-        return this.stringId;
-    }
-
-
-    public int getPointId() {
+    public String getPointId() {
         return this.pointId;
     }
 
@@ -122,7 +112,7 @@ public class CustomViewMarker extends ViewGroup implements MapObjectTapListener,
         WritableMap e = Arguments.createMap();
         e.putDouble("lat", point.getLatitude());
         e.putDouble("lon", point.getLongitude());
-        e.putInt("id", this.getPointId());
+        e.putString("id", this.getPointId());
         ((ReactContext) getContext()).getJSModule(RCTEventEmitter.class).receiveEvent(parentId, "onMarkerPressed", e);
         return true;
     }
