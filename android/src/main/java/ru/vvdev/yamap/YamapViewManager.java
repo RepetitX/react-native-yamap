@@ -1,6 +1,5 @@
 package ru.vvdev.yamap;
 
-import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -15,6 +14,7 @@ import com.facebook.react.uimanager.annotations.ReactProp;
 import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.map.CameraPosition;
+import com.yandex.mapkit.map.InputListener;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -35,9 +35,12 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
     private static final int SET_ZOOM = 4;
     private static final int GET_CAMERA_POSITION = 5;
     private static final int ADD_MARKERS = 6;
-    private static final int  GET_FOCUS_REGION = 7;
+    private static final int GET_FOCUS_REGION = 7;
 
-    private int viewsCount = 0;
+    private String currentActivePoint = null;
+    private CustomViewMarker currentMarker = null;
+
+    //private int viewsCount = 0;
 
     YamapViewManager() {
     }
@@ -46,12 +49,6 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
     public String getName() {
         return REACT_CLASS;
     }
-
-//    @Override
-//    public Map<String, Object> getExportedCustomDirectEventTypeConstants() {
-//        return MapBuilder.<String, Object>builder()
-//                .build();
-//    }
 
     @Override
     public Map<String, Object> getExportedCustomDirectEventTypeConstants() {
@@ -99,6 +96,7 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
         Assertions.assertNotNull(args);
         switch (commandType) {
             case "addMarkers":
+                currentMarker = null;
                 view.clearMarkers();
                 ReadableArray points = args.getArray(0);
                 float zoom = view.getMap().getCameraPosition().getZoom();
@@ -107,23 +105,44 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
                     ReadableMap point = points.getMap(i);
                     double lat = point.getDouble("lat");
                     double lon = point.getDouble("lon");
-                    int poinId = point.getInt("id");
+                    int pointId = point.getInt("id");
                     String text = point.getString("text");
+                    String stringId = Double.toString(lat) + Double.toString(lon);
                     
                     if (zoom >= 14.5) {
                         CustomViewMarker m = new CustomViewMarker(this.ctx);
-                        m.setPointId(poinId);
+                        m.setPointId(pointId);
+                        m.setPointStringId(stringId);
                         m.setText(text);
                         m.point = new Point(lat, lon);
                         m.setParentId(view.getId());
                         view.addFeature(m,i);
+
+                        m.setMarkerTapListener(new CustomViewMarker.MarkerTapListener() {
+                            @Override
+                            public void onMarkerTap(CustomViewMarker marker, Point point) {
+                                currentActivePoint = marker.getPointStringId();
+                                if (currentMarker != null) {
+                                    currentMarker.deactivate();
+                                }
+                                currentMarker = marker;
+                                marker.activate();
+                            }
+                        });
+
+                        if (currentActivePoint != null) {
+                            if (currentActivePoint.equals(m.getPointStringId())) {
+                                m.activate();
+                                currentMarker = m;
+                            }
+                        }
                     } else {
                         YamapMarker m = new YamapMarker(this.ctx);
                         m.point = new Point(lat, lon);
                         view.addFeature(m,i);
                     }
 
-                    viewsCount = i;
+                    //viewsCount = i;
                 }
 
                 return;
@@ -174,6 +193,23 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
         YamapView view = new YamapView(context);
         MapKitFactory.getInstance().onStart();
         view.onStart();
+        view.setTapListener(new InputListener() {
+            @Override
+            public void onMapTap(@NonNull com.yandex.mapkit.map.Map map, @NonNull Point point) {
+                if (currentActivePoint != null) {
+                    currentActivePoint = null;
+                    if (currentMarker != null) {
+                        currentMarker.deactivate();
+                        currentMarker = null;
+                    }
+                }
+            }
+
+            @Override
+            public void onMapLongTap(@NonNull com.yandex.mapkit.map.Map map, @NonNull Point point) {
+
+            }
+        });
         return view;
     }
 

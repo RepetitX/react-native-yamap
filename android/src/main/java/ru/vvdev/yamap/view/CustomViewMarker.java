@@ -30,6 +30,17 @@ public class CustomViewMarker extends ViewGroup implements MapObjectTapListener,
     private int parentId;
     private int pointId;
     private String text;
+    private String stringId;
+
+    public interface MarkerTapListener {
+        void onMarkerTap(CustomViewMarker marker, Point point);
+    }
+
+    private MarkerTapListener markerTapListener;
+
+    public void setMarkerTapListener(MarkerTapListener listener) {
+        this.markerTapListener = listener;
+    }
 
     public CustomViewMarker(Context context) {
         super(context);
@@ -44,6 +55,15 @@ public class CustomViewMarker extends ViewGroup implements MapObjectTapListener,
         this.pointId = id;
     }
 
+    public void setPointStringId(String stringId) {
+        this.stringId = stringId;
+    }
+
+    public String getPointStringId() {
+        return this.stringId;
+    }
+
+
     public int getPointId() {
         return this.pointId;
     }
@@ -52,7 +72,7 @@ public class CustomViewMarker extends ViewGroup implements MapObjectTapListener,
         this.text = text;
     }
 
-    private void updateMarker() {
+    private void updateMarker(boolean active) {
         Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Bold.ttf");
         String text = this.text;
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -62,7 +82,7 @@ public class CustomViewMarker extends ViewGroup implements MapObjectTapListener,
 
         Paint rectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         rectPaint.setTextSize(39);
-        rectPaint.setColor(Color.BLUE);
+        rectPaint.setColor(active ? Color.RED : Color.BLUE);
         Rect bounds = new Rect();
         rectPaint.getTextBounds(text, 0, text.length(), bounds);
 
@@ -80,15 +100,25 @@ public class CustomViewMarker extends ViewGroup implements MapObjectTapListener,
     public void setMapObject(MapObject obj) {
         mapObject = (PlacemarkMapObject) obj;
         mapObject.addTapListener(this);
-        updateMarker();
+        updateMarker(false);
     }
 
     public MapObject getMapObject() {
         return mapObject;
     }
 
+
+    public void activate() {
+        updateMarker(true);
+    }
+
+    public void deactivate() {
+        updateMarker(false);
+    }
+
     @Override
     public boolean onMapObjectTap(@NonNull MapObject mapObject, @NonNull Point point) {
+        markerTapListener.onMarkerTap(this, point);
         WritableMap e = Arguments.createMap();
         e.putDouble("lat", point.getLatitude());
         e.putDouble("lon", point.getLongitude());

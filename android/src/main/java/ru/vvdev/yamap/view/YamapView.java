@@ -94,6 +94,8 @@ public class YamapView extends MapView implements UserLocationObjectListener, Ca
     private float userLocationAccuracyStrokeWidth = 0.f;
     private List<ReactMapObject> childs = new ArrayList<>();
 
+    private InputListener tapListener = null;
+
     // location
     private UserLocationView userLocationView = null;
 
@@ -569,41 +571,17 @@ public class YamapView extends MapView implements UserLocationObjectListener, Ca
         WritableMap position = positionToJSON(cameraPosition, finished);
         ReactContext reactContext = (ReactContext) getContext();
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(getId(), "cameraPositionChanged", position);
+    }
 
-//        if (finished) {
-//            VisibleRegion visibleRegion = getFocusRegion();
-//            ScreenPoint topLeft = worldToScreen(visibleRegion.getTopLeft());
-//            ScreenPoint bottomRight = worldToScreen(visibleRegion.getBottomRight());
-//
-//            float topLeftX = topLeft.getX();
-//            float topLeftY = topLeft.getY();
-//            float bottomRightX = bottomRight.getX();
-//            float bottomRightY = bottomRight.getY();
-//
-//            float zoom = cameraPosition.getZoom();
-//
-//            ArrayList<YamapMarker> markers = new ArrayList<>();
-//            for (int i = 0; i < childs.size(); ++i) {
-//                ReactMapObject obj = childs.get(i);
-//                if (obj instanceof YamapMarker) {
-//                    YamapMarker marker = (YamapMarker) obj;
-//
-//                    float x = worldToScreen(marker.point).getX();
-//                    float y = worldToScreen(marker.point).getY();
-//
-//                    if (zoom >= 14.5 && x > topLeftX && x < bottomRightX && y > topLeftY && y < bottomRightY) {
-//                        marker.showMemoizedView();
-//                    }
-//                }
-//            }
-//
-//            Log.d("MARKER_COUNT", String.valueOf(markers.size()));
-//        }
-
+    public void setTapListener(InputListener tapListener) {
+        this.tapListener = tapListener;
     }
 
     @Override
     public void onMapTap(@NonNull com.yandex.mapkit.map.Map map, @NonNull Point point) {
+        if (this.tapListener != null) {
+            this.tapListener.onMapTap(map, point);
+        }
         WritableMap data = Arguments.createMap();
         data.putDouble("lat", point.getLatitude());
         data.putDouble("lon", point.getLongitude());
