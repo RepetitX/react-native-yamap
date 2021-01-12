@@ -108,7 +108,7 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
                     String pointId = point.getString("id");
                     String text = point.getString("text");
                     
-                    if (zoom >= 14.5) {
+                    if (zoom >= 15) {
                         CustomViewMarker m = new CustomViewMarker(this.ctx);
                         m.setPointId(pointId);
                         m.setText(text);

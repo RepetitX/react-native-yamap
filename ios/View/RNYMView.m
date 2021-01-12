@@ -232,7 +232,7 @@
         YMKPoint *point = [customPoint objectForKey:@"point"];
         NSString *text = [[customPoint objectForKey:@"text"] stringValue];
         
-        if (zoom >= 14.5) {
+        if (zoom >= 15) {
             BOOL state = NO;
             if (activePointId && [activePointId isEqualToString:pointId]) {
                 state = YES;

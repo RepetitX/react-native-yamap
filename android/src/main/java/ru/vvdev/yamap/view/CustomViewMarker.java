@@ -67,11 +67,11 @@ public class CustomViewMarker extends ViewGroup implements MapObjectTapListener,
         String text = this.text;
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.WHITE);
-        paint.setTextSize(39);
+        paint.setTextSize(34);
         paint.setTypeface(typeface);
 
         Paint rectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        rectPaint.setTextSize(39);
+        rectPaint.setTextSize(34);
         rectPaint.setColor(active ? Color.RED : Color.BLUE);
         Rect bounds = new Rect();
         rectPaint.getTextBounds(text, 0, text.length(), bounds);

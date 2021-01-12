@@ -16,7 +16,7 @@
     if (self) {
         _text = text;
         
-        UIFont *font = [UIFont fontWithName:@"Roboto-Bold" size:14.0];
+        UIFont *font = [UIFont fontWithName:@"Roboto-Bold" size:12.0];
         NSDictionary *attrsDictionary = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
         CGSize size = [[[NSAttributedString alloc] initWithString:_text attributes:attrsDictionary] size];
         self.frame = CGRectMake(0 , 0, size.width + 12, size.height + 4);
