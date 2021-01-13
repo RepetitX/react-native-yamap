@@ -230,7 +230,7 @@
         NSMutableDictionary *customPoint = [_points objectAtIndex:i];
         NSString *pointId = [customPoint objectForKey:@"id"];
         YMKPoint *point = [customPoint objectForKey:@"point"];
-        NSString *text = [[customPoint objectForKey:@"text"] stringValue];
+        NSString *text = [customPoint objectForKey:@"text"];
         
         if (zoom >= 15) {
             BOOL state = NO;
