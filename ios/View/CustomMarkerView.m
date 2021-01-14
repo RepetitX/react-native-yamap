@@ -26,7 +26,7 @@
         [markerText setTextColor:[UIColor whiteColor]];
         [markerText setBackgroundColor:[UIColor clearColor]];
         [markerText setFont:font];
-        markerText.center = CGPointMake((size.width + 8) / 2, (size.height + 2) / 2);
+        markerText.center = CGPointMake((size.width + 6) / 2, (size.height + 1) / 2);
         
         UIView* roundedView = [[UIView alloc] initWithFrame: CGRectMake(0 , 0, size.width + 8, size.height + 2)];
         roundedView.backgroundColor = color;//[UIColor colorWithRed: 0.28 green: 0.56 blue: 0.62 alpha: 1.00];

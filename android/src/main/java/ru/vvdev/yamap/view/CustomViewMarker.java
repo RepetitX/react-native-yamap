@@ -85,6 +85,7 @@ public class CustomViewMarker extends ViewGroup implements MapObjectTapListener,
         c.drawText(text,17,bounds.height()+10, paint);
 
         mapObject.setIcon(ImageProvider.fromBitmap(b));
+        mapObject.setZIndex(active ? 2 : 1);
     }
 
     public void setMapObject(MapObject obj) {

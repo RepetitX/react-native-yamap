@@ -74,7 +74,7 @@
     _pointId = pointId;
     
     [self setPoint:point];
-    [self insertCustomMarker:[self createCustomMarkerWithText:text andState:state]];
+    [self insertCustomMarkerWithText:text andState:state];
 
     return self;
 }
@@ -93,10 +93,15 @@
     return customMarker;
 }
 
--(void) insertCustomMarker:(CustomMarkerView*) customMarker {
+-(void) insertCustomMarkerWithText:(NSString*) text
+                          andState:(BOOL) state
+{
+    CustomMarkerView* customMarker = [self createCustomMarkerWithText:text andState:state];
     [self removeReactSubview:_childView];
     [self insertReactSubview:customMarker atIndex:0];
     [self didUpdateReactSubviews];
+    //[mapObject setZIndex: state ? 2 : 1];
+    zIndex = state ? [NSNumber numberWithInt:2] : [NSNumber numberWithInt:1];
 }
 
 -(void) updateMarker {
@@ -172,11 +177,11 @@
 }
 
 -(void) activate {
-    [self insertCustomMarker:[self createCustomMarkerWithText:_text andState:YES]];
+    [self insertCustomMarkerWithText:_text andState:YES];
 }
 
 -(void) deactivate {
-    [self insertCustomMarker:[self createCustomMarkerWithText:_text andState:NO]];
+    [self insertCustomMarkerWithText:_text andState:NO];
 }
 
 -(void) setPointId:(NSString*) pointId {
