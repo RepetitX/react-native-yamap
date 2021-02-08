@@ -130,7 +130,7 @@ public class YamapView extends MapView implements UserLocationObjectListener, Ca
 
     public void emitCameraPositionToJS(String id) {
         CameraPosition position = getMap().getCameraPosition();
-        WritableMap cameraPosition = positionToJSON(position);
+        WritableMap cameraPosition = positionToJSON(position, true);
         cameraPosition.putString("id", id);
         ReactContext reactContext = (ReactContext) getContext();
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(getId(), "cameraPosition", cameraPosition);
