@@ -9,6 +9,7 @@
 
 @property (nonatomic, copy) RCTBubblingEventBlock _Nullable onRouteFound;
 @property (nonatomic, copy) RCTBubblingEventBlock _Nullable onCameraPositionReceived;
+@property (nonatomic, copy) RCTBubblingEventBlock _Nullable onFocusRegionReceived;
 @property (nonatomic, copy) RCTBubblingEventBlock _Nullable onCameraPositionChange;
 @property (nonatomic, copy) RCTBubblingEventBlock _Nullable onMapPress;
 @property (nonatomic, copy) RCTBubblingEventBlock _Nullable onMapLongPress;
