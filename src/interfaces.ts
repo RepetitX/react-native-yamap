@@ -65,4 +65,3 @@ export interface FocusRegion {
     bottomLeft: Object,
     bottomRight: Object
 }
-  

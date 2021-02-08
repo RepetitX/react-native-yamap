@@ -106,6 +106,10 @@ var YaMap = /** @class */ (function (_super) {
         var cbId = CallbacksManager_1.default.addCallback(callback);
         react_native_1.UIManager.dispatchViewManagerCommand(react_native_1.findNodeHandle(this), this.getCommand('getCameraPosition'), [cbId]);
     };
+    YaMap.prototype.getFocusRegion = function (callback) {
+        var cbId = CallbacksManager_1.default.addCallback(callback);
+        react_native_1.UIManager.dispatchViewManagerCommand(react_native_1.findNodeHandle(this), this.getCommand('getFocusRegion'), [cbId]);
+    };
     YaMap.prototype._findRoutes = function (points, vehicles, callback) {
         var cbId = CallbacksManager_1.default.addCallback(callback);
         var args = react_native_1.Platform.OS === 'ios'
