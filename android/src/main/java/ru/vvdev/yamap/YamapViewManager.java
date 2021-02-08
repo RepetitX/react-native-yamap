@@ -54,6 +54,7 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
                 .put("cameraPositionChanged", MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onCameraPositionChange")))
                 .put("onMapPress", MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onMapPress")))
                 .put("onMapLongPress", MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onMapLongPress")))
+                .put("focusRegion", MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onFocusRegionReceived")))
                 .build();
     }
 
