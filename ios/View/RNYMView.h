@@ -15,6 +15,7 @@
 
 // ref
 -(void) emitCameraPositionToJS:(NSString*_Nonnull) _id;
+-(void) emitFocusRegionToJS:(NSString*_Nonnull) _id;
 -(void) setCenter:(YMKCameraPosition*_Nonnull) position withDuration:(float) duration withAnimation:(int) animation;
 -(void) setZoom:(float) zoom withDuration:(float) duration withAnimation:(int) animation;
 -(void) fitAllMarkers;

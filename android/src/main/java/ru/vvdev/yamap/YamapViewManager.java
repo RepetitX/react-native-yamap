@@ -31,6 +31,7 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
     private static final int FIND_ROUTES = 3;
     private static final int SET_ZOOM = 4;
     private static final int GET_CAMERA_POSITION = 5;
+    private static final int GET_FOCUS_REGION  = 6;
 
     YamapViewManager() {
     }
@@ -68,7 +69,9 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
                 "setZoom",
                 SET_ZOOM,
                 "getCameraPosition",
-                GET_CAMERA_POSITION);
+                GET_CAMERA_POSITION,
+                "getFocusRegion",
+                GET_FOCUS_REGION);
     }
 
     @Override
@@ -98,6 +101,11 @@ public class YamapViewManager extends ViewGroupManager<YamapView> {
             case "getCameraPosition":
                 if (args != null) {
                     view.emitCameraPositionToJS(args.getString(0));
+                }
+                return;
+            case "getFocusRegion":
+                if (args != null) {
+                    view.emitFocusRegionToJS(args.getString(0));
                 }
                 return;
             default:

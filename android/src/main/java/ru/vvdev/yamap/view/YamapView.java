@@ -136,6 +136,45 @@ public class YamapView extends MapView implements UserLocationObjectListener, Ca
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(getId(), "cameraPosition", cameraPosition);
     }
 
+    private WritableMap focusRegionToJSON(VisibleRegion visibleRegion) {
+        Point topLeftPoint = visibleRegion.getTopLeft();
+        Point topRightPoint = visibleRegion.getTopRight();
+        Point bottomLeftPoint = visibleRegion.getBottomLeft();
+        Point bottomRightPoint = visibleRegion.getBottomRight();
+
+        WritableMap focusRegion = Arguments.createMap();
+
+        WritableMap topLeft = Arguments.createMap();
+        topLeft.putDouble("lat", topLeftPoint.getLatitude());
+        topLeft.putDouble("lon", topLeftPoint.getLongitude());
+        focusRegion.putMap("topLeft", topLeft);
+
+        WritableMap topRight = Arguments.createMap();
+        topRight.putDouble("lat", topRightPoint.getLatitude());
+        topRight.putDouble("lon", topRightPoint.getLongitude());
+        focusRegion.putMap("topRight", topRight);
+
+        WritableMap bottomLeft = Arguments.createMap();
+        bottomLeft.putDouble("lat", bottomLeftPoint.getLatitude());
+        bottomLeft.putDouble("lon", bottomLeftPoint.getLongitude());
+        focusRegion.putMap("bottomLeft", bottomLeft);
+
+        WritableMap bottomRight = Arguments.createMap();
+        bottomRight.putDouble("lat", bottomRightPoint.getLatitude());
+        bottomRight.putDouble("lon", bottomRightPoint.getLongitude());
+        focusRegion.putMap("bottomRight", bottomRight);
+
+        return focusRegion;
+    }
+
+    public void emitFocusRegionToJS(String id) {
+        VisibleRegion visibleRegion = getFocusRegion();
+        WritableMap focusRegion = focusRegionToJSON(visibleRegion);
+        focusRegion.putString("id", id);
+        ReactContext reactContext = (ReactContext) getContext();
+        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(getId(), "focusRegion", focusRegion);
+    }
+
     public void setZoom(Float zoom, float duration, int animation) {
         CameraPosition prevPosition = getMap().getCameraPosition();
         CameraPosition position = new CameraPosition(prevPosition.getTarget(), zoom, prevPosition.getAzimuth(), prevPosition.getTilt());

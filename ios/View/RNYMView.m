@@ -341,6 +341,36 @@
     }
 }
 
+-(NSDictionary*) focusRegionToJSON:(YMKVisibleRegion*)focusRegion {
+    return @{
+        @"topLeft": @{
+            @"lat": [NSNumber numberWithDouble:[[focusRegion topLeft] latitude]],
+            @"lon": [NSNumber numberWithDouble:[[focusRegion topLeft] longitude]]
+        },
+        @"topRight": @{
+            @"lat": [NSNumber numberWithDouble:[[focusRegion topRight] latitude]],
+            @"lon": [NSNumber numberWithDouble:[[focusRegion topRight] longitude]]
+        },
+        @"bottomLeft": @{
+            @"lat": [NSNumber numberWithDouble:[[focusRegion bottomLeft] latitude]],
+            @"lon": [NSNumber numberWithDouble:[[focusRegion bottomLeft] longitude]]
+        },
+        @"bottomRight": @{
+            @"lat": [NSNumber numberWithDouble:[[focusRegion bottomRight] latitude]],
+            @"lon": [NSNumber numberWithDouble:[[focusRegion bottomRight] longitude]]
+        }
+    };
+}
+
+-(void) emitFocusRegionToJS:(NSString*) _id {
+    YMKVisibleRegion* region = [[self mapWindow] focusRegion];
+    NSDictionary* focusRegion = [self focusRegionToJSON:region];
+    NSMutableDictionary *response = [NSMutableDictionary dictionaryWithDictionary:focusRegion];
+    [response setValue:_id forKey:@"id"];
+    if (self.onFocusRegionReceived) {
+        self.onFocusRegionReceived(response);
+    }
+}
 
 - (void)onCameraPositionChangedWithMap:(nonnull YMKMap *)map
     cameraPosition:(nonnull YMKCameraPosition *)cameraPosition
