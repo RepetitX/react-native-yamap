@@ -1,6 +1,11 @@
 export interface Point {
   lat: number,
-  lon: number,
+  lon: number
+}
+
+export interface CustomMarker extends Point {
+    text: string,
+    id: number
 }
 
 export type MasstransitVehicles = 'bus' | 'trolleybus' | 'tramway' | 'minibus' | 'suburban' | 'underground' | 'ferry' | 'cable' | 'funicular';
@@ -51,4 +56,13 @@ export interface CameraPosition {
   tilt: number;
   azimuth: number;
   point: Point;
+  finished: boolean
 }
+
+export interface FocusRegion {
+    topLeft: Object,
+    topRight: Object,
+    bottomLeft: Object,
+    bottomRight: Object
+}
+  

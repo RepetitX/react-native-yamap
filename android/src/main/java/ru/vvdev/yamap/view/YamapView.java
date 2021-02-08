@@ -114,7 +114,7 @@ public class YamapView extends MapView implements UserLocationObjectListener, Ca
         }
     }
 
-    private WritableMap positionToJSON(CameraPosition position) {
+    private WritableMap positionToJSON(CameraPosition position, Boolean finished) {
         WritableMap cameraPosition = Arguments.createMap();
         Point point = position.getTarget();
         cameraPosition.putDouble("azimuth", position.getAzimuth());
@@ -124,6 +124,7 @@ public class YamapView extends MapView implements UserLocationObjectListener, Ca
         target.putDouble("lat", point.getLatitude());
         target.putDouble("lon", point.getLongitude());
         cameraPosition.putMap("point", target);
+        cameraPosition.putBoolean("finished", finished);
         return cameraPosition;
     }
 
@@ -514,8 +515,8 @@ public class YamapView extends MapView implements UserLocationObjectListener, Ca
     }
 
     @Override
-    public void onCameraPositionChanged(@NonNull com.yandex.mapkit.map.Map map, @NonNull CameraPosition cameraPosition, @NonNull CameraUpdateSource cameraUpdateSource, boolean b) {
-        WritableMap position = positionToJSON(cameraPosition);
+    public void onCameraPositionChanged(@NonNull com.yandex.mapkit.map.Map map, @NonNull CameraPosition cameraPosition, @NonNull CameraUpdateSource cameraUpdateSource, boolean finished) {
+        WritableMap position = positionToJSON(cameraPosition, finished);
         ReactContext reactContext = (ReactContext) getContext();
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(getId(), "cameraPositionChanged", position);
     }

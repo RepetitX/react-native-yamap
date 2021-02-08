@@ -38,7 +38,9 @@ public class ImageLoader {
             return bitmap;
         }
         int id = context.getResources().getIdentifier(url, "drawable", context.getPackageName());
-        return BitmapFactory.decodeResource(context.getResources(), id);//getResId(url, R.drawable.class));
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inScaled = false;
+        return BitmapFactory.decodeResource(context.getResources(), id, options);//getResId(url, R.drawable.class));
     }
 
     public static void DownloadImageBitmap(final Context context, final String url, final Callback<Bitmap> cb) {
