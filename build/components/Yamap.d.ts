@@ -40,6 +40,7 @@ export declare class YaMap extends React.Component<YaMapProps> {
     private getCommand;
     private processRoute;
     private processCameraPosition;
+    private processFocusRegion;
     private resolveImageUri;
     private getProps;
     render(): JSX.Element;

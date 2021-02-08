@@ -132,11 +132,15 @@ var YaMap = /** @class */ (function (_super) {
         var _a = event.nativeEvent, id = _a.id, position = __rest(_a, ["id"]);
         CallbacksManager_1.default.call(id, position);
     };
+    YaMap.prototype.processFocusRegion = function (event) {
+        var _a = event.nativeEvent, id = _a.id, focusRegion = __rest(_a, ["id"]);
+        CallbacksManager_1.default.call(id, focusRegion);
+    };
     YaMap.prototype.resolveImageUri = function (img) {
         return img ? resolveAssetSource_1.default(img).uri : '';
     };
     YaMap.prototype.getProps = function () {
-        var props = __assign(__assign({}, this.props), { onRouteFound: this.processRoute, onCameraPositionReceived: this.processCameraPosition, userLocationIcon: this.props.userLocationIcon ? this.resolveImageUri(this.props.userLocationIcon) : undefined });
+        var props = __assign(__assign({}, this.props), { onRouteFound: this.processRoute, onCameraPositionReceived: this.processCameraPosition, onFocusRegionReceived: this.processFocusRegion, userLocationIcon: this.props.userLocationIcon ? this.resolveImageUri(this.props.userLocationIcon) : undefined });
         utils_1.processColorProps(props, 'userLocationAccuracyFillColor');
         utils_1.processColorProps(props, 'userLocationAccuracyStrokeColor');
         return props;
