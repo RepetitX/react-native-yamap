@@ -133,7 +133,7 @@ public class YamapMarker extends ReactViewGroup implements MapObjectTapListener,
         if (view == null) {
             _childView.removeOnLayoutChangeListener(childLayoutListener);
             _childView = null;
-            updateMarker();
+            //updateMarker();
             return;
         }
         _childView = view;
