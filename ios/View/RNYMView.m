@@ -215,11 +215,6 @@
     return routeMetadata;
 }
 
-- (CGSize)sizeOfString:(NSString *)string withFont:(NSFont *)font {
-     NSDictionary *attributes = [NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil];
-     return [[[NSAttributedString alloc] initWithString:string attributes:attributes] size];
- }
-
 -(void) addMarkers:(NSArray*) _points {
     YMKMapObjectCollection *objects = self.mapWindow.map.mapObjects;
     [objects clear];
